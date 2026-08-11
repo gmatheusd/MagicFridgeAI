@@ -1,5 +1,7 @@
 package br.com.monkeyscript.MagicFridgeAI.service;
 
+import br.com.monkeyscript.MagicFridgeAI.dto.FoodItemDTO;
+import br.com.monkeyscript.MagicFridgeAI.mapper.FoodItemMapper;
 import br.com.monkeyscript.MagicFridgeAI.model.FoodItem;
 import br.com.monkeyscript.MagicFridgeAI.repository.FoodItemRepository;
 import org.springframework.http.HttpStatus;
@@ -12,35 +14,44 @@ import java.util.Optional;
 public class FoodItemService {
 
     private final FoodItemRepository repository;
+    private final FoodItemMapper mapper;
 
-    public FoodItemService(FoodItemRepository repository) {
+    public FoodItemService(FoodItemRepository repository, FoodItemMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     // Criar
-    public FoodItem salvar(FoodItem foodItem) {
-        return repository.save(foodItem);
+    public FoodItemDTO salvar(FoodItemDTO foodItemDTO) {
+        FoodItem entity = mapper.toEntity(foodItemDTO);
+        FoodItem salvo = repository.save(entity);
+        return mapper.toDTO(salvo);
     }
 
     // Listar
-    public List<FoodItem>listarFoods() {
-        return repository.findAll();
+    public List<FoodItemDTO>listarFoods() {
+        List<FoodItem> lista = repository.findAll();
+        return lista.stream()
+                .map(mapper::toDTO)
+                .toList();
     }
 
     // Listar por Id
-    public FoodItem listarPorId(Long id) {
-        Optional<FoodItem> optional = repository.findById(id);
-        return optional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item não encontrado"));
+    public FoodItemDTO listarPorId(Long id) {
+        Optional<FoodItem> foodPorId = repository.findById(id);
+        return foodPorId.map(mapper::toDTO).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item não encontrado"));
     }
 
     // Alterar
-    public  FoodItem alterarPorId(Long id, FoodItem foodItem) {
-        Optional<FoodItem> foodExistente = repository.findById(id);
-        if (foodExistente.isEmpty()) {
+    public  FoodItemDTO alterarPorId(Long id, FoodItemDTO foodItemDTO) {
+        Optional<FoodItem> entity = repository.findById(id);
+        if (entity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item não encontrado");
         }
-        foodItem.setId(id);
-        return repository.save(foodItem);
+        FoodItem foodAtualizada = mapper.toEntity(foodItemDTO);
+        foodAtualizada.setId(id);
+        FoodItem salvo = repository.save(foodAtualizada);
+        return mapper.toDTO(salvo);
     }
 
     // Deletar

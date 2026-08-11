@@ -1,6 +1,6 @@
 package br.com.monkeyscript.MagicFridgeAI.controller;
 
-import br.com.monkeyscript.MagicFridgeAI.model.FoodItem;
+import br.com.monkeyscript.MagicFridgeAI.dto.FoodItemDTO;
 import br.com.monkeyscript.MagicFridgeAI.service.FoodItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,28 +24,28 @@ public class FoodItemController {
 
     // POST
     @PostMapping("/criar")
-    public ResponseEntity<FoodItem> criar(@RequestBody FoodItem foodItem) {
-        FoodItem salvo = service.salvar(foodItem);
+    public ResponseEntity<FoodItemDTO> criar(@RequestBody FoodItemDTO foodItemDTO) {
+        FoodItemDTO salvo = service.salvar(foodItemDTO);
         return ResponseEntity.ok(salvo);
     }
 
     // GET
     @GetMapping("/listar")
-    public ResponseEntity<List<FoodItem>> listarFoods() {
-        List<FoodItem> lista = service.listarFoods();
+    public ResponseEntity<List<FoodItemDTO>> listarFoods() {
+        List<FoodItemDTO> lista = service.listarFoods();
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/listar/{id}")
-    public ResponseEntity<FoodItem> listarPorId(@PathVariable Long id) {
-        FoodItem foodItem = service.listarPorId(id);
+    public ResponseEntity<FoodItemDTO> listarPorId(@PathVariable Long id) {
+        FoodItemDTO foodItem = service.listarPorId(id);
         return ResponseEntity.ok(foodItem);
     }
 
     // UPDATE
     @PutMapping("/alterar/{id}")
-    public ResponseEntity<FoodItem> alterarPorId(@PathVariable Long id, @RequestBody FoodItem foodItem) {
-        FoodItem foodAtualizado = service.alterarPorId(id, foodItem);
+    public ResponseEntity<FoodItemDTO> alterarPorId(@PathVariable Long id, @RequestBody FoodItemDTO foodItemDTO) {
+        FoodItemDTO foodAtualizado = service.alterarPorId(id, foodItemDTO);
         return ResponseEntity.ok(foodAtualizado);
     }
 
